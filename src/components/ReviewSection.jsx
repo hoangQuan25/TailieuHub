@@ -47,7 +47,7 @@ const ReviewSection = ({ reviews = [], onAddReview, entityType }) => { // entity
                     {reviews.map((review, index) => (
                         <li key={review.id || index} className="p-4 border border-gray-200 rounded-md shadow-sm bg-gray-50">
                             {entityType === 'document' && review.stars && (
-                                <p className="text-yellow-500 font-bold">Rating: {'⭐'.repeat(review.stars)}</p>
+                                <p className="text-yellow-500 font-bold">Đánh giá: {'⭐'.repeat(review.stars)}</p>
                             )}
                             <p className="font-semibold">{review.user} <span className="text-sm text-gray-500 font-normal">- {review.date}</span></p>
                             <p className="mt-1 text-gray-700">{review.comment}</p>
@@ -60,14 +60,14 @@ const ReviewSection = ({ reviews = [], onAddReview, entityType }) => { // entity
                 onClick={handleAddReviewClick}
                 className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
-                Add Review
+                Thêm đánh giá
             </button>
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <h2 className="text-lg font-medium mb-4">Write your review</h2>
+                <h2 className="text-lg font-medium mb-4">Viết đánh giá của bạn.</h2>
                 {entityType === 'document' && (
                      <div className="mb-4">
-                         <label className="block text-sm font-medium text-gray-700 mb-1">Rating:</label>
+                         <label className="block text-sm font-medium text-gray-700 mb-1">Đánh giá sao:</label>
                          <div className="flex space-x-1">
                              {[1, 2, 3, 4, 5].map(star => (
                                  <button

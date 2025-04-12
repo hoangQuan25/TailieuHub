@@ -23,7 +23,7 @@ const MajorDetailPage = () => {
     }, [id]);
 
     if (!major) {
-        return <div className="container mx-auto p-4">Major not found.</div>;
+        return <div className="container mx-auto p-4">Không tìm thấy chuyên ngành.</div>;
     }
 
     // Group subjects by category
@@ -48,7 +48,7 @@ const MajorDetailPage = () => {
             <h2 className="text-3xl font-bold mb-1">{major.code} - {major.name}</h2>
             <p className="text-gray-700 mb-6">{major.description}</p>
 
-            <h3 className="text-xl font-semibold mb-4 border-t pt-4">Subjects</h3>
+            <h3 className="text-xl font-semibold mb-4 border-t pt-4">Môn học</h3>
             {sortedCategories.length > 0 ? (
                 <div className="space-y-6">
                     {sortedCategories.map(category => (
@@ -69,7 +69,7 @@ const MajorDetailPage = () => {
                     ))}
                 </div>
             ) : (
-                <p className="text-gray-500">No subjects listed for this major yet.</p>
+                <p className="text-gray-500">Tạm thời chưa có môn nào thuộc ngành này.</p>
             )}
         </div>
     );

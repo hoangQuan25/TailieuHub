@@ -57,7 +57,7 @@ const DocumentDetailPage = () => {
     // --- End download handler ---
 
     if (!document) {
-        return <div className="container mx-auto p-4">Document not found.</div>;
+        return <div className="container mx-auto p-4">Hông tìm thấy tài liệu.</div>;
     }
 
     return (
@@ -66,13 +66,13 @@ const DocumentDetailPage = () => {
             <h2 className="text-3xl font-bold mb-2">{document.name}</h2>
              {subject && (
                   <p className="text-md text-gray-600 mb-4">
-                      Part of subject: <Link to={`/subject/${subject.id}`} className="text-blue-600 hover:underline">{subject.code} - {subject.name}</Link>
+                      Tài liệu thuộc môn: <Link to={`/subject/${subject.id}`} className="text-blue-600 hover:underline">{subject.code} - {subject.name}</Link>
                   </p>
              )}
              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-sm text-gray-700">
-                 <div><strong>Category:</strong> {document.category}</div>
-                 <div><strong>Uploaded:</strong> {document.uploadedDate}</div>
-                  <div><strong>Rating:</strong> <StarRating rating={document.stars} /></div>
+                 <div><strong>Phân loại:</strong> {document.category}</div>
+                 <div><strong>Upload ngày:</strong> {document.uploadedDate}</div>
+                  <div><strong>Đánh giá:</strong> <StarRating rating={document.stars} /></div>
              </div>
 
 
@@ -86,7 +86,7 @@ const DocumentDetailPage = () => {
                     disabled={!document.pdfUrl} // Disable if no URL
                     className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Download Document
+                    Download tài liệu
                 </button>
             </div>
             {/* --- End Download Button --- */}

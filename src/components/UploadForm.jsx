@@ -1,10 +1,8 @@
 // src/components/UploadForm.jsx
 import React, { useState, useEffect } from 'react';
-import { majors, subjects as allSubjects } from '../data/mockData'; // Import data
+import { majors, subjects as allSubjects, documentCategories } from '../data/mockData'; // Import data
 import { toast } from 'react-toastify'; // Import toast
 
-// Define categories directly here or import them if defined elsewhere
-const documentCategories = ['Curriculum', 'Slide', 'Reference Book', 'Exercise', 'Test'];
 
 // Props:
 // - onClose: Function to close the modal
@@ -64,12 +62,12 @@ const UploadForm = ({ onClose }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4 text-center">Upload Document</h2>
+            <h2 className="text-xl font-semibold mb-4 text-center">Upload tài liệu</h2>
 
             {/* File Input */}
             <div>
                 <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-1">
-                    Choose File <span className="text-red-500">*</span>
+                    Chọn File <span className="text-red-500">*</span>
                 </label>
                 <input
                     id="file-upload"
@@ -78,13 +76,13 @@ const UploadForm = ({ onClose }) => {
                     onChange={handleFileChange}
                     className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
-                {selectedFile && <p className="text-xs text-gray-500 mt-1">Selected: {selectedFile.name}</p>}
+                {selectedFile && <p className="text-xs text-gray-500 mt-1">Đã chọn: {selectedFile.name}</p>}
             </div>
 
             {/* Document Name */}
             <div>
                 <label htmlFor="doc-name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Document Name <span className="text-red-500">*</span>
+                    Tên tài liệu <span className="text-red-500">*</span>
                 </label>
                 <input
                     type="text"
@@ -100,7 +98,7 @@ const UploadForm = ({ onClose }) => {
             {/* Major Dropdown */}
             <div>
                 <label htmlFor="major-select" className="block text-sm font-medium text-gray-700 mb-1">
-                    Major <span className="text-red-500">*</span>
+                    Chuyên ngành <span className="text-red-500">*</span>
                 </label>
                 <select
                     id="major-select"
@@ -109,7 +107,7 @@ const UploadForm = ({ onClose }) => {
                     required
                     className="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                    <option value="" disabled>-- Select Major --</option>
+                    <option value="" disabled>-- Chọn chuyên ngành --</option>
                     {majors.map((major) => (
                         <option key={major.id} value={major.id}>
                             {major.code} - {major.name}
@@ -121,7 +119,7 @@ const UploadForm = ({ onClose }) => {
             {/* Subject Dropdown (depends on Major) */}
             <div>
                 <label htmlFor="subject-select" className="block text-sm font-medium text-gray-700 mb-1">
-                    Subject <span className="text-red-500">*</span>
+                    Môn học <span className="text-red-500">*</span>
                 </label>
                 <select
                     id="subject-select"
@@ -131,14 +129,14 @@ const UploadForm = ({ onClose }) => {
                     disabled={!selectedMajorId || availableSubjects.length === 0} // Disable if no major or no subjects
                     className="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100"
                 >
-                    <option value="" disabled>-- Select Subject --</option>
+                    <option value="" disabled>-- Chọn môn học --</option>
                     {availableSubjects.map((subject) => (
                         <option key={subject.id} value={subject.id}>
                             {subject.code} - {subject.name}
                         </option>
                     ))}
                     {selectedMajorId && availableSubjects.length === 0 && (
-                         <option value="" disabled>No subjects found for selected major</option>
+                         <option value="" disabled>Chuyên ngành đã chọn tạm không có môn học nào.</option>
                     )}
                 </select>
             </div>
@@ -146,7 +144,7 @@ const UploadForm = ({ onClose }) => {
             {/* Category Dropdown */}
             <div>
                 <label htmlFor="category-select" className="block text-sm font-medium text-gray-700 mb-1">
-                    Category <span className="text-red-500">*</span>
+                    Phân loại <span className="text-red-500">*</span>
                 </label>
                 <select
                     id="category-select"
@@ -155,7 +153,7 @@ const UploadForm = ({ onClose }) => {
                     required
                     className="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                    <option value="" disabled>-- Select Category --</option>
+                    <option value="" disabled>-- Chọn phân loại --</option>
                     {documentCategories.map((category) => (
                         <option key={category} value={category}>
                             {category}

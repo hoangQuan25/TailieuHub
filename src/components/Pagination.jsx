@@ -29,10 +29,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 disabled={currentPage === 1}
                 className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
             >
-                Previous
+                Trước
             </button>
             <span className="text-gray-700">
-                Page {currentPage} of {totalPages}
+                Trang {currentPage} trong {totalPages}
             </span>
             {/* Optional: Render page number buttons here */}
             <button
@@ -40,7 +40,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 disabled={currentPage === totalPages}
                 className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300"
             >
-                Next
+                Sau
             </button>
         </div>
     );
