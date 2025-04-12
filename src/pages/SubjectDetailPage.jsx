@@ -42,7 +42,7 @@ const SubjectDetailPage = () => {
 
 
     if (!subject) {
-        return <div className="container mx-auto p-4">Subject not found.</div>;
+        return <div className="container mx-auto p-4">Không tìm thấy môn học.</div>;
     }
 
     // Pagination logic
@@ -73,10 +73,10 @@ const SubjectDetailPage = () => {
     return (
         <div className="container mx-auto p-6">
             <h2 className="text-3xl font-bold mb-1">{subject.code} - {subject.name}</h2>
-            <p className="text-lg text-gray-600 mb-4">Category: {subject.category}</p>
+            <p className="text-lg text-gray-600 mb-4">Phân loại: {subject.category}</p>
             <p className="text-gray-700 mb-6">{subject.description}</p>
 
-            <h3 className="text-xl font-semibold mb-4 border-t pt-4">Documents</h3>
+            <h3 className="text-xl font-semibold mb-4 border-t pt-4">Tài liệu của môn này</h3>
             {currentDocuments.length > 0 ? (
                 <ul className="space-y-3 mb-6">
                     {currentDocuments.map(doc => (
@@ -89,7 +89,7 @@ const SubjectDetailPage = () => {
                     ))}
                 </ul>
             ) : (
-                <p className="text-gray-500 mb-6">No documents uploaded for this subject yet.</p>
+                <p className="text-gray-500 mb-6">Tạm thời chưa có tài liệu nào thuộc môn này.</p>
             )}
 
             <Pagination
