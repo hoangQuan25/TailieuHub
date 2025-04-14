@@ -1,4 +1,13 @@
-// src/data/mockData.js
+// --- HELPER FUNCTION ---
+const removeDiacritics = (str) => {
+  if (!str) return '';
+  return str
+    .normalize('NFD') // Step 1: Decompose chars into base char + diacritic
+    .replace(/[\u0300-\u036f]/g, '') // Step 2: Remove diacritic marks (range U+0300 to U+036f)
+    .replace(/[đĐ]/g, 'd') // Step 3: Treat Vietnamese 'd'/'D' as 'd'
+    .toLowerCase(); // Step 4: Convert to lowercase
+};
+
 // --- Dữ liệu Ngành học (Majors) ---
 export const majors = [
   {
@@ -1743,33 +1752,30 @@ export const documents = [
 
 // --- Các hàm tìm kiếm/lấy dữ liệu giữ nguyên ---
 export const findData = (query) => {
-  const lowerQuery = query.toLowerCase();
-  const foundDocs = documents.filter((doc) =>
-    doc.name.toLowerCase().includes(lowerQuery)
+  // Normalize the search query ONCE
+  const normalizedQuery = removeDiacritics(query);
+
+  // Filter each type using the normalized query and normalized data fields
+  const foundDocs = documents.filter(doc =>
+      removeDiacritics(doc.name).includes(normalizedQuery)
   );
-  const foundSubjects = subjects.filter(
-    (sub) =>
-      sub.name.toLowerCase().includes(lowerQuery) ||
-      sub.code.toLowerCase().includes(lowerQuery)
+  const foundSubjects = subjects.filter(sub =>
+      removeDiacritics(sub.name).includes(normalizedQuery) ||
+      removeDiacritics(sub.code).includes(normalizedQuery) // Also normalize code for searching
   );
-  const foundMajors = majors.filter(
-    (maj) =>
-      maj.name.toLowerCase().includes(lowerQuery) ||
-      maj.code.toLowerCase().includes(lowerQuery)
+  const foundMajors = majors.filter(maj =>
+      removeDiacritics(maj.name).includes(normalizedQuery) ||
+      removeDiacritics(maj.code).includes(normalizedQuery) // Also normalize code
   );
-  const typedDocs = foundDocs.map((doc) => ({
-    ...doc,
-    resultType: "document",
-  }));
-  const typedSubjects = foundSubjects.map((sub) => ({
-    ...sub,
-    resultType: "subject",
-  }));
-  const typedMajors = foundMajors.map((maj) => ({
-    ...maj,
-    resultType: "major",
-  }));
+
+  // Map to add type information (remains the same)
+  const typedDocs = foundDocs.map(doc => ({ ...doc, resultType: 'document' }));
+  const typedSubjects = foundSubjects.map(sub => ({ ...sub, resultType: 'subject' }));
+  const typedMajors = foundMajors.map(maj => ({ ...maj, resultType: 'major' }));
+
+  // Combine into a single array (remains the same)
   const combinedResults = [...typedDocs, ...typedSubjects, ...typedMajors];
+
   return combinedResults;
 };
 

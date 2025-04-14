@@ -1,21 +1,34 @@
 // src/components/UploadForm.jsx
-import React, { useState } from "react"; // Removed useEffect
-// Import only what's needed: allSubjects and documentCategories
+import React, { useState, useRef, useEffect } from "react"; // Added useRef, useEffect
 import { subjects as allSubjects, documentCategories } from "../data/mockData";
 import { toast } from "react-toastify";
 
-// Props:
-// - onClose: Function to close the modal
+const removeDiacritics = (str) => {
+  if (!str) return "";
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase();
+};
+
 const UploadForm = ({ onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentName, setDocumentName] = useState("");
-  // Removed selectedMajorId and availableSubjects state
+  // State for the text typed into the subject input
+  const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
+  // State for the list of matching subject suggestions
+  const [subjectSuggestions, setSubjectSuggestions] = useState([]);
+  // State to hold the ID of the *selected* subject from suggestions
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
+  // State to control visibility of the suggestions dropdown
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Removed useEffect for filtering subjects
+  const subjectInputRef = useRef(null); // Ref for focus/blur handling if needed
 
   const handleFileChange = (event) => {
+    // ... (remains the same) ...
     if (event.target.files && event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
     } else {
@@ -23,33 +36,79 @@ const UploadForm = ({ onClose }) => {
     }
   };
 
+  // --- Subject Autocomplete Logic ---
+  const handleSubjectInputChange = (event) => {
+    const query = event.target.value;
+    setSubjectSearchQuery(query);
+    setSelectedSubjectId(""); // Clear selection if user types again
+
+    if (query.trim().length > 0) {
+      // Normalize the search query
+      const normalizedQuery = removeDiacritics(query);
+
+      // Filter subjects using normalized query and normalized data
+      const filtered = allSubjects.filter(
+        (subject) =>
+          removeDiacritics(subject.name).includes(normalizedQuery) ||
+          removeDiacritics(subject.code).includes(normalizedQuery)
+      );
+      setSubjectSuggestions(filtered.slice(0, 10)); // Limit suggestions
+      setShowSuggestions(true);
+    } else {
+      setSubjectSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (subject) => {
+    setSubjectSearchQuery(`${subject.code} - ${subject.name}`); // Show selected in input
+    setSelectedSubjectId(subject.id); // Set the actual selected ID
+    setSubjectSuggestions([]); // Clear suggestions
+    setShowSuggestions(false); // Hide suggestions
+  };
+
+  // Hide suggestions when clicking outside - using onMouseDown on suggestions helps
+  // A more robust solution might use a dedicated hook or library
+  const handleBlur = (e) => {
+    // Delay hiding slightly to allow click on suggestion to register
+    setTimeout(() => {
+      // Check if the focus is moving to a suggestion item (less reliable)
+      // or just hide unconditionally for simplicity in mock
+      setShowSuggestions(false);
+    }, 150); // 150ms delay
+  };
+  // --- End Subject Autocomplete Logic ---
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Updated validation: Removed selectedMajorId check
+    // Updated validation: Check selectedSubjectId is set (meaning a suggestion was clicked)
     if (
       !selectedFile ||
       !documentName ||
       !selectedSubjectId ||
       !selectedCategory
     ) {
-      toast.error("Vui lòng điền đủ các trường và chọn file."); // Translated error
+      // Make error message more specific if subject is the issue
+      let errorMsg = "Vui lòng điền đủ các trường và chọn file.";
+      if (!selectedSubjectId && subjectSearchQuery) {
+        errorMsg = "Vui lòng chọn một môn học từ danh sách gợi ý.";
+      } else if (!selectedSubjectId) {
+        errorMsg = "Vui lòng tìm và chọn một môn học.";
+      }
+      toast.error(errorMsg);
       return;
     }
 
-    // --- Mock Upload Logic ---
-    // Updated console log: Removed majorId
     console.log("Simulating upload with:", {
+      // ... (same logging) ...
       fileName: selectedFile.name,
       documentName,
       subjectId: selectedSubjectId,
       category: selectedCategory,
     });
-    // In a real app, you would use FormData and fetch/axios to send to backend here
 
-    // Simulate success
-    toast.success("Tải lên thành công! Đội ngũ quản trị viên sẽ xử lý sớm."); // Translated success
-    onClose(); // Close the modal after simulated success
-    // --- End Mock Upload Logic ---
+    toast.success("Tải lên thành công! Đội ngũ quản trị viên sẽ xử lý sớm.");
+    onClose();
   };
 
   return (
@@ -58,8 +117,9 @@ const UploadForm = ({ onClose }) => {
         Upload tài liệu
       </h2>
 
-      {/* File Input (remains the same) */}
+      {/* File Input */}
       <div>
+        {/* ... (File input label and input remain the same) ... */}
         <label
           htmlFor="file-upload"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -70,8 +130,7 @@ const UploadForm = ({ onClose }) => {
           id="file-upload"
           type="file"
           required
-          onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          onChange={handleFileChange} /* ... classes ... */
         />
         {selectedFile && (
           <p className="text-xs text-gray-500 mt-1">
@@ -80,8 +139,9 @@ const UploadForm = ({ onClose }) => {
         )}
       </div>
 
-      {/* Document Name (remains the same) */}
+      {/* Document Name */}
       <div>
+        {/* ... (Document name label and input remain the same) ... */}
         <label
           htmlFor="doc-name"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -94,40 +154,54 @@ const UploadForm = ({ onClose }) => {
           value={documentName}
           onChange={(e) => setDocumentName(e.target.value)}
           required
-          placeholder="Ví dụ: Slide Chương 1, Đề giữa kỳ 2024" // Translated placeholder
-          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Ví dụ: Slide Chương 1, Đề giữa kỳ 2024" /* ... classes ... */
         />
       </div>
 
-      {/* REMOVED Major Dropdown */}
-
-      {/* UPDATED Subject Dropdown */}
-      <div>
+      {/* UPDATED Subject Autocomplete Input */}
+      <div className="relative" ref={subjectInputRef}>
+        {" "}
+        {/* Added relative positioning and ref */}
         <label
-          htmlFor="subject-select"
+          htmlFor="subject-search"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
           Môn học <span className="text-red-500">*</span>
         </label>
-        <select
-          id="subject-select"
-          value={selectedSubjectId}
-          onChange={(e) => setSelectedSubjectId(e.target.value)}
-          required
-          // Removed disabled attribute logic
+        <input
+          type="text"
+          id="subject-search"
+          placeholder="Nhập mã hoặc tên môn học để tìm..." // New placeholder
+          value={subjectSearchQuery}
+          onChange={handleSubjectInputChange}
+          onBlur={handleBlur} // Hide suggestions on blur (with delay)
+          // Optional: onFocus={() => setShowSuggestions(true)} // Show suggestions on focus if desired
+          autoComplete="off" // Prevent browser autocomplete interference
           className="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="" disabled>
-            -- Chọn môn học --
-          </option>
-          {/* Populate directly with all subjects */}
-          {allSubjects.map((subject) => (
-            <option key={subject.id} value={subject.id}>
-              {subject.code} - {subject.name}
-            </option>
-          ))}
-          {/* Removed conditional "No subjects found" option */}
-        </select>
+        />
+        {/* Suggestions Dropdown */}
+        {showSuggestions && subjectSuggestions.length > 0 && (
+          <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg z-20">
+            {subjectSuggestions.map((subject) => (
+              <li
+                key={subject.id}
+                className="px-3 py-2 hover:bg-blue-100 cursor-pointer text-sm"
+                // Use onMouseDown to handle click before blur hides the list
+                onMouseDown={() => handleSuggestionClick(subject)}
+              >
+                {subject.code} - {subject.name}
+              </li>
+            ))}
+          </ul>
+        )}
+        {/* Optional: Show message when typing but no matches */}
+        {showSuggestions &&
+          subjectSearchQuery &&
+          subjectSuggestions.length === 0 && (
+            <div className="absolute left-0 right-0 mt-1 p-3 bg-white border border-gray-300 rounded-md shadow-lg z-20 text-sm text-gray-500">
+              Không tìm thấy môn học nào.
+            </div>
+          )}
       </div>
 
       {/* Category Dropdown (remains the same) */}
@@ -148,15 +222,11 @@ const UploadForm = ({ onClose }) => {
           <option value="" disabled>
             -- Chọn phân loại --
           </option>
-          {documentCategories.map(
-            (
-              category // Assuming you imported the Vietnamese categories
-            ) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            )
-          )}
+          {documentCategories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
       </div>
 
