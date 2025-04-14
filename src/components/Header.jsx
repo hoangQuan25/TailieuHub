@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import React, { useState, useRef, useEffect } from "react"; // Import useRef, useEffect
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import Modal from "./Modal";
 import UploadForm from "./UploadForm";
@@ -34,6 +34,9 @@ const Header = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false); // State for notifications
   const notificationsRef = useRef(null); // Ref for click outside detection
 
+  const [headerQuery, setHeaderQuery] = useState("");
+  const navigate = useNavigate(); // Initialize navigate hook
+
   // --- Click Outside Handler for Notifications ---
   useEffect(() => {
     function handleClickOutside(event) {
@@ -60,6 +63,19 @@ const Header = () => {
   }, [notificationsRef]); // Dependency array includes the ref
   // --- End Click Outside Handler ---
 
+  // --- Handler for submitting search from the header ---
+  const handleHeaderSearchSubmit = (e) => {
+    e.preventDefault();
+    if (headerQuery.trim()) {
+      // Navigate to search results page with the query and 'all' filter
+      navigate(
+        `/search?q=${encodeURIComponent(headerQuery.trim())}&filter=all`
+      );
+      // Optionally clear the header search bar after submit
+      // setHeaderQuery('');
+    }
+  };
+
   const avatarUrl = "https://placehold.co/32x32/EBF4FF/76A9FA?text=HQ";
 
   return (
@@ -76,11 +92,20 @@ const Header = () => {
         </div>
 
         {/* Center Section (Search Bar) - Allow it to take significant width */}
-        <div className="w-full max-w-xl px-4">
-          {" "}
-          {/* Control max width, add padding */}
-          <SearchBar />
-        </div>
+        <form
+          onSubmit={handleHeaderSearchSubmit}
+          className="w-full max-w-xl px-4"
+        >
+          <SearchBar
+            value={headerQuery} // Pass state value
+            onChange={(e) => setHeaderQuery(e.target.value)} // Update state on change
+            placeholder="Tìm kiếm tài liệu..." // Example placeholder
+          />
+          {/* Hidden submit allows Enter key submission */}
+          <button type="submit" className="hidden">
+            Search
+          </button>
+        </form>
 
         {/* Right Section (Icons & Profile) - Takes up available space or fixed width */}
         <div className="flex-1 flex justify-end">
