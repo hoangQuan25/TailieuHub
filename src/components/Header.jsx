@@ -4,30 +4,51 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import Modal from "./Modal";
 import UploadForm from "./UploadForm";
-import { FaBell } from "react-icons/fa"; // Import a bell icon
+import { FaBell, FaCaretDown } from "react-icons/fa"; // Import a bell icon
 
-// Mock notifications (replace with real data/state management later)
 const mockNotifications = [
   {
     id: 1,
-    text: "Your review for MI1131 was approved.",
-    date: "2025-04-11",
-    read: false,
+    // Example: Review approval for a specific document or subject
+    text: "Đánh giá của bạn cho môn 'MI1114 - Giải tích I' đã được phê duyệt.",
+    date: "2025-04-14", // Use recent dates relative to current time
+    read: false, // Example: Unread
   },
   {
     id: 2,
-    text: "New document 'AI Chapter 5' uploaded for IT3080.",
-    date: "2025-04-10",
-    read: false,
+    // Example: An uploaded document was approved
+    text: "Tài liệu 'Slide CTDL&TT - Chương 2' bạn tải lên đã được quản trị viên phê duyệt.",
+    date: "2025-04-13",
+    read: false, // Example: Unread
   },
   {
     id: 3,
-    text: "Reminder: Midterm for IT2000 is next week.",
-    date: "2025-04-09",
-    read: true,
+    // Example: Another review approval
+    text: "Đánh giá của bạn cho tài liệu 'Bài tập Lập trình Python cơ bản' đã được phê duyệt.",
+    date: "2025-04-12",
+    read: true, // Example: Read
   },
-  { id: 4, text: "Welcome to TailieuHub!", date: "2025-04-01", read: true },
+  {
+    id: 4,
+    // Example: Another document approval
+    text: "Tài liệu 'Đề thi cuối kỳ Mạng máy tính - 20241' bạn tải lên đã được phê duyệt.",
+    date: "2025-04-11",
+    read: true, // Example: Read
+  },
+    // Optional: Add one for the initial upload success (though toast handles immediate feedback)
+//   {
+//     id: 5,
+//     text: "Đã tải lên thành công tài liệu 'Báo cáo Thực tập Công nghiệp', đang chờ phê duyệt.",
+//     date: "2025-04-10",
+//     read: true,
+//   },
 ];
+
+const filterOptions = {
+  all: "Tất cả",
+  subject: "Môn học",
+  major: "Ngành học",
+};
 
 const Header = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -35,6 +56,9 @@ const Header = () => {
   const notificationsRef = useRef(null); // Ref for click outside detection
 
   const [headerQuery, setHeaderQuery] = useState("");
+  const [headerSearchFilter, setHeaderSearchFilter] = useState("all"); // State for selected filter
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false); // State for dropdown visibility
+  const filterDropdownRef = useRef(null); // Ref for click outside
   const navigate = useNavigate(); // Initialize navigate hook
 
   // --- Click Outside Handler for Notifications ---
@@ -63,17 +87,42 @@ const Header = () => {
   }, [notificationsRef]); // Dependency array includes the ref
   // --- End Click Outside Handler ---
 
+  useEffect(() => {
+    function handleDropDownClickOutside(event) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target)
+      ) {
+        // Check if click was on the trigger button itself
+        if (!event.target.closest("#filter-dropdown-button")) {
+          setIsFilterDropdownOpen(false);
+        }
+      }
+    }
+    // Bind the event listener
+    document.addEventListener("mousedown", handleDropDownClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleDropDownClickOutside);
+    };
+  }, [filterDropdownRef]);
+
   // --- Handler for submitting search from the header ---
   const handleHeaderSearchSubmit = (e) => {
     e.preventDefault();
     if (headerQuery.trim()) {
       // Navigate to search results page with the query and 'all' filter
       navigate(
-        `/search?q=${encodeURIComponent(headerQuery.trim())}&filter=all`
+        `/search?q=${encodeURIComponent(headerQuery.trim())}&filter=${headerSearchFilter}`
       );
       // Optionally clear the header search bar after submit
       // setHeaderQuery('');
     }
+  };
+
+  // --- Handler for selecting a filter from dropdown ---
+  const handleFilterSelect = (filterKey) => {
+    setHeaderSearchFilter(filterKey);
+    setIsFilterDropdownOpen(false);
   };
 
   const avatarUrl = "https://placehold.co/32x32/EBF4FF/76A9FA?text=HQ";
@@ -92,20 +141,65 @@ const Header = () => {
         </div>
 
         {/* Center Section (Search Bar) - Allow it to take significant width */}
-        <form
-          onSubmit={handleHeaderSearchSubmit}
-          className="w-full max-w-xl px-4"
-        >
-          <SearchBar
-            value={headerQuery} // Pass state value
-            onChange={(e) => setHeaderQuery(e.target.value)} // Update state on change
-            placeholder="Tìm kiếm tài liệu..." // Example placeholder
-          />
-          {/* Hidden submit allows Enter key submission */}
-          <button type="submit" className="hidden">
-            Search
-          </button>
-        </form>
+        <div className="w-full max-w-xl px-4">
+          <form
+            onSubmit={handleHeaderSearchSubmit}
+            className="flex items-center w-full relative"
+          >
+            {/* Search Bar takes most space */}
+            <div className="flex-grow">
+              <SearchBar
+                value={headerQuery}
+                onChange={(e) => setHeaderQuery(e.target.value)}
+                placeholder="Tìm kiếm..." // Shorter placeholder
+              />
+            </div>
+
+            {/* Filter Dropdown Trigger Button */}
+            <div className="relative ml-1" ref={filterDropdownRef}>
+              {" "}
+              {/* Added ref here */}
+              <button
+                type="button"
+                id="filter-dropdown-button" // ID for click outside check
+                onClick={() => setIsFilterDropdownOpen((prev) => !prev)}
+                className="flex items-center justify-between px-3 py-2 h-[42px] border border-l-0 border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-r-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" // Match input height, rounded right
+                style={{ minWidth: "100px" }} // Ensure minimum width
+              >
+                <span className="truncate">
+                  {filterOptions[headerSearchFilter]}
+                </span>
+                <FaCaretDown className="ml-1" />
+              </button>
+              {/* Filter Dropdown Panel */}
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg overflow-hidden z-30 border border-gray-200">
+                  <ul>
+                    {Object.entries(filterOptions).map(([key, value]) => (
+                      <li key={key}>
+                        <button
+                          type="button"
+                          onClick={() => handleFilterSelect(key)}
+                          className={`block w-full text-left px-4 py-2 text-sm ${
+                            headerSearchFilter === key
+                              ? "bg-blue-100 text-blue-700 font-semibold"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            {/* Hidden submit allows Enter key submission from input */}
+            <button type="submit" className="hidden">
+              Search
+            </button>
+          </form>
+        </div>
 
         {/* Right Section (Icons & Profile) - Takes up available space or fixed width */}
         <div className="flex-1 flex justify-end">
