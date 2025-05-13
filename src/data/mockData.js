@@ -522,6 +522,10 @@ export const subjects = [
         like: 6,
       },
     ],
+    tips: [
+            { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
+            { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+        ],
   }, // Linked d7
   {
     id: "s_MI1144",
@@ -531,6 +535,10 @@ export const subjects = [
     category: "Đại cương",
     documents: [],
     reviews: [],
+    tips: [
+        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
+        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+    ],
   },
   {
     id: "s_MI2021",
@@ -540,6 +548,10 @@ export const subjects = [
     category: "Đại cương",
     documents: [],
     reviews: [],
+    tips: [
+        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
+        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+    ],
   },
   {
     id: "s_PH1110",
@@ -549,6 +561,10 @@ export const subjects = [
     category: "Đại cương",
     documents: [],
     reviews: [],
+    tips: [
+        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
+        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+    ],
   },
   {
     id: "s_PH1120",

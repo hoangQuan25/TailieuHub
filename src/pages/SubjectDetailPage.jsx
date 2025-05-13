@@ -4,7 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 import { getSubjectById, getDocumentsByIds } from '../data/mockData';
 import Pagination from '../components/Pagination';
 import StarRating from '../components/StarRating';
-import ReviewSection from '../components/ReviewSection'; // Already imported
+import ReviewSection from '../components/ReviewSection';
+import TipsSection from '../components/TipsSection'; // Import TipsSection
 
 const DOCS_PER_PAGE = 10;
 
@@ -12,21 +13,29 @@ const SubjectDetailPage = () => {
     const { id } = useParams();
     const [subject, setSubject] = useState(null);
     const [documents, setDocuments] = useState([]);
-    const [reviews, setReviews] = useState([]); // State for subject reviews exists
-    const [currentPage, setCurrentPage] = useState(1); // State for document pagination
+    const [reviews, setReviews] = useState([]);
+    const [tips, setTips] = useState([]); // New state for tips
+    const [currentPage, setCurrentPage] = useState(1); // Document pagination
+    const [activeTab, setActiveTab] = useState('reviews'); // State for active tab
 
     useEffect(() => {
         const subjData = getSubjectById(id);
         if (subjData) {
             setSubject(subjData);
 
-            // Initialize subject reviews, ensuring 'likes' property exists
+            // Initialize subject reviews
             const initialReviews = subjData.reviews?.map(review => ({
                 ...review,
-                // --- CRITICAL: Make sure review IDs in mockData for subjects are UNIQUE ---
-                likes: review.likes || 0 // Initialize likes if missing
+                likes: review.likes || 0,
             })) || [];
-            setReviews(initialReviews); // Set the reviews state
+            setReviews(initialReviews);
+
+            // Initialize subject tips
+            const initialTips = subjData.tips?.map(tip => ({
+                ...tip,
+                likes: tip.likes || 0,
+            })) || [];
+            setTips(initialTips);
 
             // Fetch related documents
             const docData = getDocumentsByIds(subjData.documents || []);
@@ -34,52 +43,64 @@ const SubjectDetailPage = () => {
         } else {
             setSubject(null);
             setDocuments([]);
-            setReviews([]); // Reset reviews if subject not found
+            setReviews([]);
+            setTips([]); // Reset tips if subject not found
         }
         setCurrentPage(1); // Reset document pagination
     }, [id]);
 
-    // Handler for adding a NEW review for the Subject
+    // Handler for adding a new review
     const handleAddReview = (newReview) => {
-        console.log("Adding subject review:", newReview);
-         // Add likes: 0 to the new review data before creating ID
         const reviewDataWithLikes = { ...newReview, likes: 0 };
-        const reviewWithId = { ...reviewDataWithLikes, id: `sr-${Date.now()}` }; // 'sr' prefix for subject review ID
+        const reviewWithId = { ...reviewDataWithLikes, id: `sr-${Date.now()}` };
         setReviews(prevReviews => [...prevReviews, reviewWithId]);
-        // TODO: Backend call to save the review
+        console.log('Added subject review:', reviewWithId);
     };
 
-    // --- Handler for LIKING a Subject's review ---
+    // Handler for liking a review
     const handleLikeReview = (reviewId) => {
         setReviews(prevReviews =>
             prevReviews.map(review => {
                 if (review.id === reviewId) {
-                    // Ensure the ID being passed/checked is correct and unique
                     return { ...review, likes: (review.likes || 0) + 1 };
                 }
                 return review;
             })
         );
-        // TODO: Backend call to update like count
-        // TODO: Add logic to prevent multiple likes from the same user
         console.log(`Liked subject review ID: ${reviewId}`);
     };
-    // --- End handler for liking ---
+
+    // Handler for adding a new tip
+    const handleAddTip = (newTip) => {
+        const tipWithId = { ...newTip, id: `st-${Date.now()}` };
+        setTips(prevTips => [...prevTips, tipWithId]);
+        console.log('Added subject tip:', tipWithId);
+    };
+
+    // Handler for liking a tip
+    const handleLikeTip = (tipId) => {
+        setTips(prevTips =>
+            prevTips.map(tip => {
+                if (tip.id === tipId) {
+                    return { ...tip, likes: (tip.likes || 0) + 1 };
+                }
+                return tip;
+            })
+        );
+        console.log(`Liked subject tip ID: ${tipId}`);
+    };
 
     if (!subject) {
         return <div className="container mx-auto p-4">Không tìm thấy môn học.</div>;
     }
 
-    // Document Pagination logic (remains the same)
+    // Document Pagination logic
     const totalPages = Math.ceil(documents.length / DOCS_PER_PAGE);
     const startIndex = (currentPage - 1) * DOCS_PER_PAGE;
     const currentDocuments = documents.slice(startIndex, startIndex + DOCS_PER_PAGE);
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
-    // StarRating rendering logic (can be kept or removed if not used elsewhere)
-    // const renderStars = (rating) => { /* ... */ };
 
     return (
         <div className="container mx-auto p-6">
@@ -95,8 +116,8 @@ const SubjectDetailPage = () => {
                     {currentDocuments.map(doc => (
                         <li key={doc.id} className="p-3 border rounded bg-white hover:bg-gray-50">
                             <Link to={`/document/${doc.id}`} className="flex justify-between items-center text-blue-600 hover:underline">
-                                 <span>{doc.name} <span className="text-xs text-gray-500">({doc.category})</span></span>
-                                 <StarRating rating={doc.stars} /> {/* Keep if you have StarRating component */}
+                                <span>{doc.name} <span className="text-xs text-gray-500">({doc.category})</span></span>
+                                <StarRating rating={doc.stars} />
                             </Link>
                         </li>
                     ))}
@@ -106,25 +127,48 @@ const SubjectDetailPage = () => {
             )}
 
             {/* Document Pagination */}
-             {totalPages > 1 && ( // Only show pagination if needed
-                 <Pagination
-                     currentPage={currentPage}
-                     totalPages={totalPages}
-                     onPageChange={handlePageChange}
-                 />
-             )}
-
-
-             {/* --- Review Section for the Subject --- */}
-             <div className="mt-8"> {/* Add margin-top for separation */}
-                <ReviewSection
-                    reviews={reviews}
-                    onAddReview={handleAddReview}
-                    onLikeReview={handleLikeReview} // <-- Pass the like handler
-                    entityType="subject" // Keep as subject (no stars in ReviewSection modal/list)
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
                 />
-             </div>
-             {/* --- End Review Section --- */}
+            )}
+
+            {/* Tabbed Interface */}
+            <div className="mt-8">
+                <div className="flex border-b border-gray-300">
+                    <button
+                        onClick={() => setActiveTab('reviews')}
+                        className={`px-4 py-2 font-semibold ${activeTab === 'reviews' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+                    >
+                        Đánh giá ({reviews.length})
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('tips')}
+                        className={`px-4 py-2 font-semibold ${activeTab === 'tips' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+                    >
+                        Mẹo học ({tips.length})
+                    </button>
+                </div>
+
+                {/* Render Active Tab Content */}
+                {activeTab === 'reviews' && (
+                    <ReviewSection
+                        reviews={reviews}
+                        onAddReview={handleAddReview}
+                        onLikeReview={handleLikeReview}
+                        entityType="subject"
+                    />
+                )}
+                {activeTab === 'tips' && (
+                    <TipsSection
+                        tips={tips}
+                        onAddTip={handleAddTip}
+                        onLikeTip={handleLikeTip}
+                    />
+                )}
+            </div>
         </div>
     );
 };
