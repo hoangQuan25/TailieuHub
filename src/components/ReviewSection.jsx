@@ -88,11 +88,13 @@ const ReviewSection = ({ reviews = [], onAddReview, entityType, onLikeReview }) 
                                 {/* --- Like Button and Count --- */}
                                 <div className="mt-2 flex items-center space-x-2">
                                     <button
-                                        onClick={() => onLikeReview(review.id)} // Call onLikeReview passed from parent
-                                        className="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
+                                        onClick={() => onLikeReview(review.id)}
+                                        className="group inline-flex items-center justify-center space-x-1.5 rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-50 hover:text-blue-700 active:bg-blue-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-150 ease-in-out transform hover:scale-105"
                                         aria-label="Like this review"
                                     >
-                                        <AiOutlineLike className="mr-1" /> Like {/* Or use an icon library */}
+                                        {/* You could add logic here to show AiFillLike if the review is already liked by the current user */}
+                                        <AiOutlineLike className="h-5 w-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                                        <span>Like</span>
                                     </button>
                                     <span className="text-sm text-gray-600">
                                         ({review.likes || 0} likes) {/* Display likes count */}

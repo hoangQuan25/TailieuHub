@@ -4,6 +4,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { findData } from "../data/mockData";
 import StarRating from "../components/StarRating"; // Assuming you have this
 import Pagination from "../components/Pagination"; // Assuming you have this
+import Modal from "../components/Modal";
 
 const ITEMS_PER_PAGE = 6; // Number of results per page
 
@@ -25,6 +26,9 @@ const SearchResultsPage = () => {
   const [filteredResults, setFilteredResults] = useState([]); // Results *after* type filter
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [documentToDownload, setDocumentToDownload] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -63,6 +67,49 @@ const SearchResultsPage = () => {
       setCurrentPage(page);
       window.scrollTo(0, 0); // Optional: Scroll to top on page change
     }
+  };
+
+  const handleOpenDownloadModal = (docItem) => {
+    if (!docItem || !docItem.pdfUrl) {
+      console.error(
+        "Document item or PDF URL is missing for download.",
+        docItem
+      );
+      // You could show a more user-friendly error, e.g., using a toast notification
+      alert(
+        "Không thể tải xuống: URL của tài liệu không hợp lệ hoặc không tồn tại."
+      );
+      return;
+    }
+    setDocumentToDownload(docItem);
+    setIsDownloadModalOpen(true);
+  };
+
+  const handleCloseDownloadModal = () => {
+    setIsDownloadModalOpen(false);
+    setDocumentToDownload(null); // Clear the selected document
+  };
+
+  const executeDownload = () => {
+    if (!documentToDownload || !documentToDownload.pdfUrl) {
+      // This should ideally not happen if handleOpenDownloadModal has validated
+      console.error("No document selected for download or PDF URL is missing.");
+      handleCloseDownloadModal();
+      return;
+    }
+
+    const link = window.document.createElement("a");
+    link.href = documentToDownload.pdfUrl;
+    // Sanitize filename, provide a default
+    const filename = documentToDownload.name
+      ? `${documentToDownload.name.replace(/[/\\?%*:|"<>]/g, "-")}.pdf`
+      : "document.pdf";
+    link.setAttribute("download", filename);
+    window.document.body.appendChild(link);
+    link.click();
+    window.document.body.removeChild(link);
+
+    handleCloseDownloadModal(); // Close modal after download is initiated
   };
 
   if (loading) {
@@ -168,19 +215,44 @@ const SearchResultsPage = () => {
                 <Link to={getLinkForItem(item)} className="block">
                   {/* Render content based on type */}
                   {item.resultType === "document" && (
-                    <>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium text-blue-600">
-                          {item.name}
+                    <div className="flex justify-between items-start gap-x-4">
+                      {" "}
+                      {/* Use items-start for better alignment if content wraps */}
+                      <Link
+                        to={getLinkForItem(item)}
+                        className="flex-grow min-w-0"
+                      >
+                        {" "}
+                        {/* Allow link to shrink if needed */}
+                        <div className="flex justify-between items-center mb-0.5">
+                          <span
+                            className="font-medium text-blue-600 hover:underline truncate pr-2"
+                            title={item.name}
+                          >
+                            {item.name}
+                          </span>
+                          {item.stars != null && (
+                            <StarRating rating={item.stars} />
+                          )}
+                        </div>
+                        <span className="text-sm text-gray-500 block">
+                          Loại: Tài liệu | Phân loại: {item.category}
                         </span>
-                        {item.stars != null && (
-                          <StarRating rating={item.stars} />
-                        )}
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        Loại: Tài liệu | Phân loại: {item.category}
-                      </span>
-                    </>
+                      </Link>
+                      {/* Download button for document type */}
+                      {item.pdfUrl && ( // Only show button if pdfUrl actually exists
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleOpenDownloadModal(item);
+                          }}
+                          className="ml-auto flex-shrink-0 px-3 py-1.5 text-xs sm:text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 whitespace-nowrap"
+                        >
+                          Tải xuống
+                        </button>
+                      )}
+                    </div>
                   )}
                   {item.resultType === "subject" && (
                     <>
@@ -218,6 +290,37 @@ const SearchResultsPage = () => {
             />
           </div>
         </>
+      )}
+
+      {documentToDownload && ( // Conditionally render Modal to ensure documentToDownload is not null
+        <Modal isOpen={isDownloadModalOpen} onClose={handleCloseDownloadModal}>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            Xác nhận tải xuống
+          </h2>
+          <p className="mb-6 text-gray-700">
+            Bạn có chắc chắn muốn tải xuống tài liệu: <br />
+            <strong className="font-medium text-gray-900 break-all">
+              {documentToDownload.name || "tài liệu này"}
+            </strong>
+            ?
+          </p>
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={handleCloseDownloadModal}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={executeDownload}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Tải xuống
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

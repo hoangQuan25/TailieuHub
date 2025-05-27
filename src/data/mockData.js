@@ -1,10 +1,10 @@
 // --- HELPER FUNCTION ---
 const removeDiacritics = (str) => {
-  if (!str) return '';
+  if (!str) return "";
   return str
-    .normalize('NFD') // Step 1: Decompose chars into base char + diacritic
-    .replace(/[\u0300-\u036f]/g, '') // Step 2: Remove diacritic marks (range U+0300 to U+036f)
-    .replace(/[đĐ]/g, 'd') // Step 3: Treat Vietnamese 'd'/'D' as 'd'
+    .normalize("NFD") // Step 1: Decompose chars into base char + diacritic
+    .replace(/[\u0300-\u036f]/g, "") // Step 2: Remove diacritic marks (range U+0300 to U+036f)
+    .replace(/[đĐ]/g, "d") // Step 3: Treat Vietnamese 'd'/'D' as 'd'
     .toLowerCase(); // Step 4: Convert to lowercase
 };
 
@@ -523,9 +523,31 @@ export const subjects = [
       },
     ],
     tips: [
-            { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
-            { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
-        ],
+      {
+        id: "st1",
+        user: "User1",
+        comment: "Học ít ít thôi.",
+        date: "2023-10-01",
+        likes: 3,
+        images: ["/meohoc1.jpeg"],
+      }, // Tip with one image
+      {
+        id: "st2",
+        user: "User2",
+        comment: "Chép bài là auto qua môn.",
+        date: "2023-10-02",
+        likes: 2,
+        images: [],
+      }, // Tip with no images
+      {
+        id: "st3",
+        user: "User3",
+        comment: "Đây là ảnh ví dụ.",
+        date: "2023-10-03",
+        likes: 5,
+        images: ["/meohoc1.jpeg", "/meohoc2.jpg"],
+      }, // Tip with two images
+    ],
   }, // Linked d7
   {
     id: "s_MI1144",
@@ -536,8 +558,20 @@ export const subjects = [
     documents: [],
     reviews: [],
     tips: [
-        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
-        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+      {
+        id: "st1",
+        user: "User1",
+        comment: "Học ít ít thôi.",
+        date: "2023-10-01",
+        likes: 3,
+      },
+      {
+        id: "st2",
+        user: "User2",
+        comment: "Chép bài là auto qua môn.",
+        date: "2023-10-02",
+        likes: 2,
+      },
     ],
   },
   {
@@ -549,8 +583,20 @@ export const subjects = [
     documents: [],
     reviews: [],
     tips: [
-        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
-        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+      {
+        id: "st1",
+        user: "User1",
+        comment: "Học ít ít thôi.",
+        date: "2023-10-01",
+        likes: 3,
+      },
+      {
+        id: "st2",
+        user: "User2",
+        comment: "Chép bài là auto qua môn.",
+        date: "2023-10-02",
+        likes: 2,
+      },
     ],
   },
   {
@@ -562,8 +608,20 @@ export const subjects = [
     documents: [],
     reviews: [],
     tips: [
-        { id: 'st1', user: 'User1', comment: 'Học ít ít thôi.', date: '2023-10-01', likes: 3 },
-        { id: 'st2', user: 'User2', comment: 'Chép bài là auto qua môn.', date: '2023-10-02', likes: 2 },
+      {
+        id: "st1",
+        user: "User1",
+        comment: "Học ít ít thôi.",
+        date: "2023-10-01",
+        likes: 3,
+      },
+      {
+        id: "st2",
+        user: "User2",
+        comment: "Chép bài là auto qua môn.",
+        date: "2023-10-02",
+        likes: 2,
+      },
     ],
   },
   {
@@ -1312,7 +1370,7 @@ export const subjects = [
   },
 ];
 
-const dummyPdfUrl = '/calculus.pdf';
+const dummyPdfUrl = "/calculus.pdf";
 
 // --- Dữ liệu Tài liệu (Documents) ---
 // Update subjectId and potentially add more relevant documents
@@ -1506,7 +1564,7 @@ export const documents = [
       {
         id: "dr14",
         user: "SV_Tam",
-        stars: 4, 
+        stars: 4,
         comment: "Bài tập rất hay, nhưng hơi khó.",
         date: "2024-09-23",
         like: 1,
@@ -1891,22 +1949,33 @@ export const findData = (query) => {
   const normalizedQuery = removeDiacritics(query);
 
   // Filter each type using the normalized query and normalized data fields
-  const foundDocs = documents.filter(doc =>
-      removeDiacritics(doc.name).includes(normalizedQuery)
+  const foundDocs = documents.filter((doc) =>
+    removeDiacritics(doc.name).includes(normalizedQuery)
   );
-  const foundSubjects = subjects.filter(sub =>
+  const foundSubjects = subjects.filter(
+    (sub) =>
       removeDiacritics(sub.name).includes(normalizedQuery) ||
       removeDiacritics(sub.code).includes(normalizedQuery) // Also normalize code for searching
   );
-  const foundMajors = majors.filter(maj =>
+  const foundMajors = majors.filter(
+    (maj) =>
       removeDiacritics(maj.name).includes(normalizedQuery) ||
       removeDiacritics(maj.code).includes(normalizedQuery) // Also normalize code
   );
 
   // Map to add type information (remains the same)
-  const typedDocs = foundDocs.map(doc => ({ ...doc, resultType: 'document' }));
-  const typedSubjects = foundSubjects.map(sub => ({ ...sub, resultType: 'subject' }));
-  const typedMajors = foundMajors.map(maj => ({ ...maj, resultType: 'major' }));
+  const typedDocs = foundDocs.map((doc) => ({
+    ...doc,
+    resultType: "document",
+  }));
+  const typedSubjects = foundSubjects.map((sub) => ({
+    ...sub,
+    resultType: "subject",
+  }));
+  const typedMajors = foundMajors.map((maj) => ({
+    ...maj,
+    resultType: "major",
+  }));
 
   // Combine into a single array (remains the same)
   const combinedResults = [...typedDocs, ...typedSubjects, ...typedMajors];
