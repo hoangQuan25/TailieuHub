@@ -46,6 +46,7 @@ const mockNotifications = [
 
 const filterOptions = {
   all: "Tất cả",
+  document: "Tài liệu", // ADDED: Filter for documents
   subject: "Môn học",
   major: "Ngành học",
 };

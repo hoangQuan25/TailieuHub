@@ -45,6 +45,10 @@ const SearchResultsPage = () => {
       resultsToDisplay = combinedResults.filter(
         (item) => item.resultType === "major"
       );
+    } else if (filter === "document") { // <-- ADDED THIS BLOCK
+      resultsToDisplay = combinedResults.filter(
+        (item) => item.resultType === "document"
+      );
     } else {
       // filter === 'all' or default
       resultsToDisplay = combinedResults;
@@ -119,6 +123,7 @@ const SearchResultsPage = () => {
   const noResultsMessage = () => {
     if (filter === "subject") return `No subjects found matching "${query}".`;
     if (filter === "major") return `No majors found matching "${query}".`;
+    if (filter === "document") return `No documents found matching "${query}".`;
     return `No results found for "${query}".`; // Default/All
   };
 

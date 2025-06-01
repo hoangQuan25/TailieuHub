@@ -5,7 +5,7 @@ import SearchBar from '../components/SearchBar';
 
 const HomePage = () => {
     const [query, setQuery] = useState('');
-    const [searchFilter, setSearchFilter] = useState('all'); // 'all', 'subject', 'major'
+    const [searchFilter, setSearchFilter] = useState('all'); // 'all', 'subject', 'major', 'document'
     const navigate = useNavigate(); // Initialize navigate
 
     const handleSearchSubmit = (e) => {
@@ -58,6 +58,14 @@ const HomePage = () => {
                          className={getButtonClass('major')}
                      >
                          Chuyên ngành
+                     </button>
+                     {/* ADDED: Button for document filter */}
+                     <button
+                         type="button"
+                         onClick={() => setSearchFilter('document')}
+                         className={getButtonClass('document')}
+                     >
+                         Tài liệu
                      </button>
                       {/* Optional: Add an "All" button to reset filter */}
                       <button
