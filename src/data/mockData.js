@@ -526,15 +526,16 @@ export const subjects = [
       {
         id: "st1",
         user: "User1",
-        comment: "Học ít ít thôi.",
+        comment:
+          "Đầu tiên và quan trọng nhất, hãy nắm thật chắc phần kiến thức giải tích từ các môn trước nhé. Giới hạn, đạo hàm, tích phân, chuỗi số, chuỗi hàm tất cả đều là nền tảng để bạn có thể tiếp thu tốt các khái niệm mới. Nếu cảm thấy chưa vững, đừng ngại dành thời gian ôn lại. Khi học đến các phương trình vi phân, bạn sẽ thấy có rất nhiều dạng và phương pháp giải khác nhau. Đừng cố gắng nhồi nhét tất cả cùng một lúc. Hãy học từng dạng một, hiểu rõ bản chất của phương pháp đó, rồi sau đó làm bài tập thật nhiều. Thực hành chính là chìa khóa để bạn thành thạo môn này. Cố gắng làm đa dạng các bài tập từ cơ bản đến nâng cao, từ sách giáo trình đến các bài tập bổ sung. Đừng ngại sai, vì mỗi lỗi sai sẽ giúp bạn hiểu sâu hơn. Một lời khuyên nữa là đừng học một mình. Hãy tìm một nhóm bạn cùng học, cùng thảo luận. Khi giải thích cho người khác, bạn sẽ tự mình củng cố kiến thức. Và quan trọng nhất, đừng ngại hỏi thầy cô hay bạn bè những chỗ mình chưa hiểu. Đôi khi, chỉ một khúc mắc nhỏ cũng có thể làm bạn mất phương hướng cả buổi học. Cuối cùng, hãy cố gắng liên hệ môn học với các ứng dụng thực tế. Khi thấy được PTVP và Chuỗi được dùng để giải quyết các vấn đề trong vật lý, kỹ thuật, kinh tế... bạn sẽ thấy môn học này không hề khô khan mà cực kỳ sống động và hữu ích. Cứ kiên trì và chăm chỉ, bạn sẽ vượt qua môn này dễ dàng thôi!.",
         date: "2023-10-01",
         likes: 3,
-        images: ["/meohoc1.jpeg"],
+        images: ["/meohoc4.jpg"],
       }, // Tip with one image
       {
         id: "st2",
         user: "User2",
-        comment: "Chép bài là auto qua môn.",
+        comment: "Học tủ dạng bài: Quan sát kỹ đề thi các năm trước (hoặc hỏi mấy anh chị khóa trên). Bạn sẽ thấy có một số dạng bài kinh điển luôn xuất hiện: PTVP tuyến tính cấp 1, PTVP tuyến tính cấp 2 (dùng biến đổi Laplace hoặc nghiệm riêng), một vài dạng chuỗi số, và đặc biệt là khai triển Taylor/Maclaurin. Mấy dạng này cứ lặp đi lặp lại. Cày nát mấy dạng này đi, nhớ từng bước giải. Chuẩn bị tài liệu vàng: Nếu thầy cô cho mang tài liệu, hãy chuẩn bị một tờ A4 (hoặc mấy tờ nếu bạn có kỹ năng viết chữ nhỏ) ghi chép thật khoa học tất cả các công thức biến đổi Laplace ngược, các công thức khai triển chuỗi cơ bản, và các mẹo giải nhanh từng dạng. Cái này quan trọng cực kỳ, vì vào phòng thi mà nhớ được hết thì cũng hơi khó. Chiêu đánh lừa chấm điểm: Khi làm bài tự luận, dù không biết cách giải triệt để, bạn hãy cố gắng viết những gì mình nhớ được liên quan đến dạng đó: công thức, phương pháp tiếp cận ban đầu, dù chỉ là vài dòng. Đôi khi, giám khảo sẽ thương tình cho bạn một ít điểm phần ý tưởng hoặc công thức nếu thấy bạn có cố gắng. Quan trọng là đừng để giấy trắng!",
         date: "2023-10-02",
         likes: 2,
         images: [],
@@ -542,7 +543,7 @@ export const subjects = [
       {
         id: "st3",
         user: "User3",
-        comment: "Đây là ảnh ví dụ.",
+        comment: "Một là, hãy thử tìm các đề thi cũ nhất có thể, kiểu như chục năm về trước ấy. Mấy đề đó thường là nguồn vàng vì nhiều khi giáo trình, dạng bài vẫn chưa thay đổi nhiều. Cố gắng học thuộc các dạng ra đề cổ điển ấy, có khi lại trúng tủ không ngờ. Hai là, trong lớp học, đặc biệt là mấy buổi cuối trước khi thi, hãy chú ý cực kỳ kỹ những gì thầy cô gạch chân, nhấn mạnh, hoặc bảo chỗ này quan trọng. Hoặc khi thầy cô chữa bài tập, hãy để ý những câu nào được chữa chi tiết nhất, hoặc có nhiều bạn hỏi nhất. Đó thường là những dấu hiệu rõ ràng cho thấy dạng bài đó khả năng cao sẽ xuất hiện trong đề. Ba là, đây là chiêu ăn may nhưng đôi khi lại hiệu quả: nếu bạn có một nhóm bạn thân và biết chắc đề thi có những phần cố định (ví dụ 3 câu tự luận, mỗi câu một dạng), hãy chia nhau ra mỗi đứa học tủ một dạng. Vào phòng thi, nếu được phép, có thể nháy nhau một chút. Tuy nhiên, cách này rủi ro cao và không được khuyến khích chút nào vì vi phạm quy chế thi đấy nhé.",
         date: "2023-10-03",
         likes: 5,
         images: ["/meohoc1.jpeg", "/meohoc2.jpg"],
