@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { AiOutlineLike } from 'react-icons/ai';
 import Modal from './Modal';
+import { toast } from 'react-toastify';
 import Pagination from './Pagination';
 
 const REVIEWS_PER_PAGE = 5;
@@ -42,6 +43,7 @@ const ReviewSection = ({ reviews = [], onAddReview, entityType, onLikeReview }) 
             ...(entityType === 'document' && { stars: newReviewStars })
         };
         onAddReview(reviewData);
+        toast.success('Đánh giá của bạn đã được tải lên.');
         handleCloseModal();
     };
 

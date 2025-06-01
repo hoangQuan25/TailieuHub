@@ -10,11 +10,11 @@ const mockNotifications = [
   {
     id: 1,
     // Example: Review approval for a specific document or subject
-    text: "Đánh giá của bạn cho môn 'MI1114 - Giải tích I' đã được phê duyệt.",
+    text: "Đánh giá của bạn cho môn 'MI1114 - Giải tích I' đã được tải lên.",
     date: "2025-04-14", // Use recent dates relative to current time
-    read: false, // Example: Unread
+    read: false, // Exam ple: Unread
   },
-  {
+  {  
     id: 2,
     // Example: An uploaded document was approved
     text: "Tài liệu 'Slide CTDL&TT - Chương 2' bạn tải lên đã được quản trị viên phê duyệt.",
@@ -24,7 +24,7 @@ const mockNotifications = [
   {
     id: 3,
     // Example: Another review approval
-    text: "Đánh giá của bạn cho tài liệu 'Bài tập Lập trình Python cơ bản' đã được phê duyệt.",
+    text: "Đánh giá của bạn cho tài liệu 'Bài tập Lập trình Python cơ bản' đã được tải lên.",
     date: "2025-04-12",
     read: true, // Example: Read
   },
