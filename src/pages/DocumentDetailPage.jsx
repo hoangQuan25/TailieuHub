@@ -143,12 +143,12 @@ const DocumentDetailPage = () => {
                     >
                         Đánh giá ({reviews.length})
                     </button>
-                    <button
+                    {/* <button
                         onClick={() => setActiveTab('tips')}
                         className={`px-4 py-2 font-semibold ${activeTab === 'tips' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
                     >
                         Mẹo học ({tips.length})
-                    </button>
+                    </button> */}
                 </div>
 
                 {activeTab === 'reviews' && (
@@ -159,13 +159,13 @@ const DocumentDetailPage = () => {
                         entityType="document"
                     />
                 )}
-                {activeTab === 'tips' && (
+                {/* {activeTab === 'tips' && (
                     <TipsSection
                         tips={tips}
                         onAddTip={handleAddTip}
                         onLikeTip={handleLikeTip}
                     />
-                )}
+                )} */}
             </div>
 
             {/* 7. Download Confirmation Modal */}
